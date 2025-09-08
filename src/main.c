@@ -3,6 +3,8 @@
 #include "player.h"
 #include "game.h"
 #include "particle.h"
+#include "ui.h"
+
 
 //====================================================================================
 // Main Entry Point
@@ -11,10 +13,11 @@ int main(void)
 {
     // Initialize Window
     //----------------------------------------------------------------------------------
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Drift Mania C");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, GAME_NAME);
     SetTargetFPS(60);
 
     GameState state = {0};
+    state.currentScreen = MAIN_MENU;
 
     // Load Textures
     Texture2D car_texture = LoadTexture("src/assets/Sprites/Cars/Player_red (16 x 16).png");
@@ -30,22 +33,43 @@ int main(void)
     //----------------------------------------------------------------------------------
 
     // Main game loop
-    while (!WindowShouldClose())
+    while (state.currentScreen != QUIT && !WindowShouldClose())
     {
-        // Update
-        //------------------------------------------------------------------------------
-        float dt = GetFrameTime();
+        // --- UPDATE LOGIC based on the current screen ---
+        switch (state.currentScreen)
+        {
+        case MAIN_MENU:
+            UpdateMainMenu(&state);
+            break;
+        case GAMEPLAY:
+        {
+            float dt = GetFrameTime();
+            HandleInput(&state.player, dt);
+            UpdatePlayer(&state.player, &state.particleSystem, dt);
+            UpdatePlayerCamera(&state.camera, &state.player, dt);
+            UpdateParticleSystem(&state.particleSystem, dt);
+        }
+        break;
+        default:
+            break;
+        }
 
-        HandleInput(&state.player, dt);
-        UpdatePlayer(&state.player, &state.particleSystem, dt);
-        UpdatePlayerCamera(&state.camera, &state.player, dt);
-        UpdateParticleSystem(&state.particleSystem, dt);
-        //------------------------------------------------------------------------------
+        // --- DRAW LOGIC based on the current screen ---
+        BeginDrawing();
 
-        // Draw
-        //------------------------------------------------------------------------------
-        RenderGame(&state);
-        //------------------------------------------------------------------------------
+        switch (state.currentScreen)
+        {
+        case MAIN_MENU:
+            RenderMainMenu(&state);
+            break;
+        case GAMEPLAY:
+            RenderGame(&state);
+            break;
+        default:
+            break;
+        }
+
+        EndDrawing();
     }
 
     // Cleanup

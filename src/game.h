@@ -9,6 +9,14 @@
 // Structs and Typedefs
 //====================================================================================
 
+// Enum holds all the possible game "screens"
+typedef enum GameScreen {
+    MAIN_MENU,
+    GAMEPLAY,
+    PAUSE_MENU,
+    QUIT
+} GameScreen;
+
 // GameState struct to hold the overall state of the game
 typedef struct GameState
 {
@@ -17,7 +25,9 @@ typedef struct GameState
     Texture2D backgroundTexture;
     Font mainFont;
     ParticleSystem particleSystem;
+    GameScreen currentScreen;
 } GameState;
+
 
 //====================================================================================
 // Function Prototypes

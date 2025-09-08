@@ -40,7 +40,6 @@ void UpdatePlayerCamera(Camera2D *camera, const Player *player, float dt)
  */
 void RenderGame(const GameState *state)
 {
-    BeginDrawing();
     ClearBackground(DARKGRAY);
     BeginMode2D(state->camera);
 
@@ -75,6 +74,4 @@ void RenderGame(const GameState *state)
     DrawFPS(SCREEN_WIDTH - 90, 10);
     DrawTextEx(state->mainFont, "UP: Accelerate\nDOWN: Brake/Reverse\nSPACE: Drift", (Vector2){10, 10}, 24, 1, WHITE);
     DrawTextEx(state->mainFont, TextFormat("SPEED: %.0f", Vector2Length(player->velocity)), (Vector2){10, 90}, 24, 1, WHITE);
-
-    EndDrawing();
 }
