@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "*.embeddedhtml": "html",
+        "limits": "c",
+        "utility": "c",
+        "xutility": "c",
+        "config.h": "c",
+        "player.h": "c",
+        "raylib.h": "c",
+        "game.h": "c"
+    }
+}
