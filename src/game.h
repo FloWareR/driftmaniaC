@@ -3,6 +3,7 @@
 
 #include <raylib.h>
 #include "player.h"
+#include "particle.h"
 
 //====================================================================================
 // Structs and Typedefs
@@ -15,6 +16,7 @@ typedef struct GameState
     Camera2D camera;
     Texture2D backgroundTexture;
     Font mainFont;
+    ParticleSystem particleSystem;
 } GameState;
 
 //====================================================================================

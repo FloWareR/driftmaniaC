@@ -6,6 +6,7 @@
 //====================================================================================
 // Structs and Typedefs
 //====================================================================================
+struct ParticleSystem;
 
 // Player struct updated for new drift physics
 typedef struct Player
@@ -37,6 +38,5 @@ typedef struct Player
 //====================================================================================
 void InitPlayer(Player *player, Texture2D texture);
 void HandleInput(Player *player, float dt);
-void UpdatePlayer(Player *player, float dt);
-
+void UpdatePlayer(Player *player, struct ParticleSystem *system, float dt);
 #endif // PLAYER_H

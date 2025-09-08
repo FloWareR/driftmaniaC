@@ -1,6 +1,7 @@
 #include "player.h"
 #include <raymath.h>
 #include <math.h>
+#include "particle.h" 
 
 /**
  * @brief Initializes the player with default values.
@@ -94,8 +95,13 @@ void HandleInput(Player *player, float dt)
 /**
  * @brief Updates player position using momentum, grip, and drift physics.
  */
-void UpdatePlayer(Player *player, float dt)
+void UpdatePlayer(Player *player, ParticleSystem *system, float dt)
 {
+    if (player->isDrifting && player->isMoving) {
+        // Emit a particle at the player's current position and rotation
+        EmitParticle(system, player->position, player->rotation);
+    }
+
     // Wrap rotation value
     if (player->rotation >= 360.0f)
         player->rotation -= 360.0f;

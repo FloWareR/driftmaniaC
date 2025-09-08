@@ -7,6 +7,7 @@
         "config.h": "c",
         "player.h": "c",
         "raylib.h": "c",
-        "game.h": "c"
+        "game.h": "c",
+        "particle.h": "c"
     }
 }

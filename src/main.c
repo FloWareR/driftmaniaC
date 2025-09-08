@@ -2,13 +2,14 @@
 #include "config.h"
 #include "player.h"
 #include "game.h"
+#include "particle.h"
 
 //====================================================================================
 // Main Entry Point
 //====================================================================================
 int main(void)
 {
-    // Initialize Window 
+    // Initialize Window
     //----------------------------------------------------------------------------------
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Drift Mania C");
     SetTargetFPS(60);
@@ -21,10 +22,11 @@ int main(void)
 
     // Load Font
     state.mainFont = LoadFont("src/assets/Fonts/PixelFont.ttf");
-    
+
     // Initialize Game Objects
     InitPlayer(&state.player, car_texture);
     InitCamera(&state.camera, state.player.position);
+    InitParticleSystem(&state.particleSystem);
     //----------------------------------------------------------------------------------
 
     // Main game loop
@@ -35,8 +37,9 @@ int main(void)
         float dt = GetFrameTime();
 
         HandleInput(&state.player, dt);
-        UpdatePlayer(&state.player, dt);
+        UpdatePlayer(&state.player, &state.particleSystem, dt);
         UpdatePlayerCamera(&state.camera, &state.player, dt);
+        UpdateParticleSystem(&state.particleSystem, dt);
         //------------------------------------------------------------------------------
 
         // Draw
