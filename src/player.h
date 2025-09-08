@@ -8,7 +8,7 @@
 //====================================================================================
 struct ParticleSystem;
 
-// Player struct updated for new drift physics
+// Player struct
 typedef struct Player
 {
     Vector2 position;
@@ -31,7 +31,13 @@ typedef struct Player
     float gripDrifting;
     float maxRotationSpeed;
     float driftTurnMultiplier;
+
+    // Particle settings
+    Vector2 wheelOffsets[4];
+    float skidParticleSize;
 } Player;
+
+
 
 //====================================================================================
 // Function Prototypes

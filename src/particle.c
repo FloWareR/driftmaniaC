@@ -45,7 +45,7 @@ void DrawParticleSystem(const ParticleSystem *system){
     }
 }
 
-void EmitParticle(ParticleSystem *ps, Vector2 position, float rotation) {
+void EmitSkidParticle(ParticleSystem *ps, Vector2 position, float rotation, float size) {
        for (int i = 0; i < MAX_PARTICLES; i++) {
         
         // Find the first available inactive particle
@@ -54,7 +54,7 @@ void EmitParticle(ParticleSystem *ps, Vector2 position, float rotation) {
                 .position = position,
                 .color = (Color){40, 40, 40, 150},
                 .rotation = rotation,
-                .size = 20.0f,
+                .size = size,
                 .lifetime = 0.0f,
                 .lifeDuration = 3.0f, 
                 .isActive = true
