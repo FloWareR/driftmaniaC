@@ -1,7 +1,7 @@
 @echo off
 echo Building the project...
 
-gcc -o game.exe src/main.c src/player.c src/game.c -I src/include -L src/lib -lraylib -lgdi32 -lwinmm
+gcc -o game.exe src/main.c src/player.c src/game.c src/particle.c src/ui.c -I src/include -L src/lib -lraylib -lgdi32 -lwinmm
 
 if %errorlevel% equ 0 (
     echo Build successful! Starting game...

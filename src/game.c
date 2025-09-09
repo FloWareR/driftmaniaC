@@ -1,5 +1,5 @@
 #include "game.h"
-#include "config.h" // For world/screen dimensions and camera settings
+#include "config.h"
 #include <raymath.h>
 
 /**
@@ -40,13 +40,11 @@ void UpdatePlayerCamera(Camera2D *camera, const Player *player, float dt)
  */
 void RenderGame(const GameState *state)
 {
-    BeginDrawing();
     ClearBackground(DARKGRAY);
-
     BeginMode2D(state->camera);
 
     // Draw tiled background
-    int tile_count_col = WORLD_WIDTH / state->backgroundTexture.width ;
+    int tile_count_col = WORLD_WIDTH / state->backgroundTexture.width;
     int tile_count_row = WORLD_HEIGHT / state->backgroundTexture.height;
     for (int y = 0; y < tile_count_row; y++)
     {
@@ -55,6 +53,9 @@ void RenderGame(const GameState *state)
             DrawTexture(state->backgroundTexture, x * state->backgroundTexture.width, y * state->backgroundTexture.height, WHITE);
         }
     }
+
+    // Draw particles
+    DrawParticleSystem(&state->particleSystem);
 
     // Draw Player
     const Player *player = &state->player;
@@ -69,10 +70,18 @@ void RenderGame(const GameState *state)
 
     EndMode2D();
 
-    // UI elements 
+    // UI elements
     DrawFPS(SCREEN_WIDTH - 90, 10);
-    DrawTextEx(state->mainFont,"UP: Accelerate\nDOWN: Brake/Reverse\nSPACE: Drift",(Vector2){10, 10}, 24, 1, WHITE);
-    DrawTextEx(state->mainFont, TextFormat("SPEED: %.0f", Vector2Length(player->velocity)),(Vector2){10, 90}, 24, 1, WHITE);
+    DrawTextEx(state->mainFont, "UP: Accelerate\nDOWN: Brake/Reverse\nSPACE: Drift", (Vector2){10, 10}, 24, 1, WHITE);
+    DrawTextEx(state->mainFont, TextFormat("SPEED: %.0f", Vector2Length(player->velocity)), (Vector2){10, 90}, 24, 1, WHITE);
+}
 
-    EndDrawing();
+/**
+ * @brief Resets all gameplay-related variables to their initial state.
+ */
+void ResetGameplayState(GameState *state)
+{
+    InitPlayer(&state->player, state->carTexture);
+    InitCamera(&state->camera, state->player.position);
+    InitParticleSystem(&state->particleSystem);
 }

@@ -6,7 +6,7 @@
 //====================================================================================
 // Defines and Macros
 //====================================================================================
-#define MAX_PARTICLES 512
+#define MAX_PARTICLES 1024
 
 //====================================================================================
 // Structs and Typedefs
@@ -31,6 +31,6 @@ typedef struct ParticleSystem{
 void InitParticleSystem(ParticleSystem *system);
 void UpdateParticleSystem(ParticleSystem *system, float dt);
 void DrawParticleSystem(const ParticleSystem *system);
-void EmitParticle(ParticleSystem *system, Vector2 position, float rotation);
+void EmitSkidParticle(ParticleSystem *system, Vector2 position, float rotation, float size);
 
 #endif // PARTICLE_H

@@ -4,7 +4,9 @@
 //====================================================================================
 // Defines and Macros
 //====================================================================================
-#define SCREEN_WIDTH 1280
+#define GAME_NAME "DriftMania C"
+#define PAUSE_KEY KEY_ESCAPE
+#define SCREEN_WIDTH 1280  
 #define SCREEN_HEIGHT 720
 #define WORLD_WIDTH 2048
 #define WORLD_HEIGHT 2048
