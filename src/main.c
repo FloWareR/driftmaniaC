@@ -5,7 +5,6 @@
 #include "particle.h"
 #include "ui.h"
 
-
 //====================================================================================
 // Main Entry Point
 //====================================================================================
@@ -14,56 +13,72 @@ int main(void)
     // Initialize Window
     //----------------------------------------------------------------------------------
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, GAME_NAME);
+    SetExitKey(KEY_NULL);
     SetTargetFPS(60);
 
     GameState state = {0};
-    state.currentScreen = MAIN_MENU;
+    state.currentScreen = SPLASH_SCREEN;
 
     // Load Textures
-    Texture2D car_texture = LoadTexture("src/assets/Sprites/Cars/Player_red (16 x 16).png");
+    state.carTexture = LoadTexture("src/assets/Sprites/Cars/Player_red (16 x 16).png");
     state.backgroundTexture = LoadTexture("src/assets/Sprites/Levels/Soil_Tile.png");
+    state.logoTexture = LoadTexture("src/assets/flowarelogo.png");
 
     // Load Font
     state.mainFont = LoadFont("src/assets/Fonts/PixelFont.ttf");
 
     // Initialize Game Objects
-    InitPlayer(&state.player, car_texture);
-    InitCamera(&state.camera, state.player.position);
-    InitParticleSystem(&state.particleSystem);
+    ResetGameplayState(&state);
     //----------------------------------------------------------------------------------
 
     // Main game loop
     while (state.currentScreen != QUIT && !WindowShouldClose())
     {
+
         // --- UPDATE LOGIC based on the current screen ---
         switch (state.currentScreen)
         {
+        case SPLASH_SCREEN:
+            UpdateSplashScreen(&state);
+            break;
         case MAIN_MENU:
             UpdateMainMenu(&state);
             break;
         case GAMEPLAY:
-        {
+            if (IsKeyPressed(PAUSE_KEY))
+            {
+                state.currentScreen = PAUSE_MENU;
+                break;
+            }
             float dt = GetFrameTime();
             HandleInput(&state.player, dt);
             UpdatePlayer(&state.player, &state.particleSystem, dt);
             UpdatePlayerCamera(&state.camera, &state.player, dt);
             UpdateParticleSystem(&state.particleSystem, dt);
-        }
-        break;
+            break;
+        case PAUSE_MENU:
+            UpdatePauseMenu(&state);
+            break;
         default:
             break;
         }
 
-        // --- DRAW LOGIC based on the current screen ---
+        // --- Render LOGIC based on the current screen ---
         BeginDrawing();
 
         switch (state.currentScreen)
         {
+        case SPLASH_SCREEN:
+            RenderplashScreen(&state);
+            break;
         case MAIN_MENU:
             RenderMainMenu(&state);
             break;
         case GAMEPLAY:
             RenderGame(&state);
+            break;
+        case PAUSE_MENU:
+            RenderPauseMenu(&state);
             break;
         default:
             break;
@@ -77,6 +92,7 @@ int main(void)
     UnloadTexture(state.player.texture);
     UnloadTexture(state.backgroundTexture);
     UnloadFont(state.mainFont);
+    UnloadTexture(state.logoTexture);
     CloseWindow();
     //----------------------------------------------------------------------------------
 

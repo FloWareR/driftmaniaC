@@ -10,7 +10,9 @@
 //====================================================================================
 
 // Enum holds all the possible game "screens"
-typedef enum GameScreen {
+typedef enum GameScreen
+{
+    SPLASH_SCREEN = 0,
     MAIN_MENU,
     GAMEPLAY,
     PAUSE_MENU,
@@ -23,11 +25,12 @@ typedef struct GameState
     Player player;
     Camera2D camera;
     Texture2D backgroundTexture;
+    Texture2D carTexture;
+    Texture2D logoTexture;
     Font mainFont;
     ParticleSystem particleSystem;
     GameScreen currentScreen;
 } GameState;
-
 
 //====================================================================================
 // Function Prototypes
@@ -35,5 +38,6 @@ typedef struct GameState
 void InitCamera(Camera2D *camera, Vector2 target);
 void UpdatePlayerCamera(Camera2D *camera, const Player *player, float dt);
 void RenderGame(const GameState *state);
+void ResetGameplayState(GameState *state);
 
 #endif // GAME_H

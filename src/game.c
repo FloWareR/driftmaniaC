@@ -75,3 +75,13 @@ void RenderGame(const GameState *state)
     DrawTextEx(state->mainFont, "UP: Accelerate\nDOWN: Brake/Reverse\nSPACE: Drift", (Vector2){10, 10}, 24, 1, WHITE);
     DrawTextEx(state->mainFont, TextFormat("SPEED: %.0f", Vector2Length(player->velocity)), (Vector2){10, 90}, 24, 1, WHITE);
 }
+
+/**
+ * @brief Resets all gameplay-related variables to their initial state.
+ */
+void ResetGameplayState(GameState *state)
+{
+    InitPlayer(&state->player, state->carTexture);
+    InitCamera(&state->camera, state->player.position);
+    InitParticleSystem(&state->particleSystem);
+}

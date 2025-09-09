@@ -8,6 +8,9 @@
         "player.h": "c",
         "raylib.h": "c",
         "game.h": "c",
-        "particle.h": "c"
+        "particle.h": "c",
+        "format": "c",
+        "iosfwd": "c",
+        "xlocbuf": "c"
     }
 }

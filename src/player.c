@@ -31,7 +31,7 @@ void InitPlayer(Player *player, Texture2D texture)
     player->gripDrifting = 0.0f;
     player->isDrifting = false;
     player->isMoving = false;
-    player->driftTurnMultiplier = 1.5f;
+    player->driftTurnMultiplier = 3.0f;
 
     // --- SET PARTICLE VARIABLES
     player->skidParticleSize = 10.0f;
