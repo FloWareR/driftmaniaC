@@ -20,7 +20,8 @@ int main(void)
     state.currentScreen = SPLASH_SCREEN;
 
     // Load Textures
-    state.carTexture = LoadTexture("src/assets/Sprites/Cars/Player_red (16 x 16).png");
+    state.carTexture = LoadTexture("src/assets/Sprites/Cars/car-red.png");
+    // state.backgroundTexture = LoadTexture("src/assets/background.jpg");
     state.backgroundTexture = LoadTexture("src/assets/Sprites/Levels/Soil_Tile.png");
     state.logoTexture = LoadTexture("src/assets/flowarelogo.png");
 
@@ -34,6 +35,8 @@ int main(void)
     // Main game loop
     while (state.currentScreen != QUIT && !WindowShouldClose())
     {
+
+        if(IsKeyPressed(KEY_F3)) state.isDebugMode = !state.isDebugMode;
 
         // --- UPDATE LOGIC based on the current screen ---
         switch (state.currentScreen)
@@ -51,6 +54,7 @@ int main(void)
                 break;
             }
             float dt = GetFrameTime();
+            CheckPlayerEntityCollisions(&state.player, &state.entityManager); 
             HandleInput(&state.player, dt);
             UpdatePlayer(&state.player, &state.particleSystem, dt);
             UpdatePlayerCamera(&state.camera, &state.player, dt);

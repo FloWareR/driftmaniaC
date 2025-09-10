@@ -11,6 +11,7 @@ struct ParticleSystem;
 // Player struct
 typedef struct Player
 {
+    int score;
     Vector2 position;
     Vector2 origin;
     Vector2 velocity;
@@ -36,8 +37,6 @@ typedef struct Player
     Vector2 wheelOffsets[4];
     float skidParticleSize;
 } Player;
-
-
 
 //====================================================================================
 // Function Prototypes

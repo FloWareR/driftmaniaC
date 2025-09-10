@@ -4,7 +4,7 @@
 #include <raylib.h>
 #include "player.h"
 #include "particle.h"
-
+#include "entity.h"
 //====================================================================================
 // Structs and Typedefs
 //====================================================================================
@@ -30,6 +30,9 @@ typedef struct GameState
     Font mainFont;
     ParticleSystem particleSystem;
     GameScreen currentScreen;
+    EntityManager entityManager;
+    int timer;
+    bool isDebugMode;
 } GameState;
 
 //====================================================================================
@@ -37,6 +40,7 @@ typedef struct GameState
 //====================================================================================
 void InitCamera(Camera2D *camera, Vector2 target);
 void UpdatePlayerCamera(Camera2D *camera, const Player *player, float dt);
+void LoadLevel(EntityManager *em);
 void RenderGame(const GameState *state);
 void ResetGameplayState(GameState *state);
 

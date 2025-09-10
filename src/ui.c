@@ -122,7 +122,7 @@ void RenderplashScreen(const GameState *state)
 
     Vector2 logoDrawPosition = {
         SCREEN_WIDTH / 2.0f - targetLogoWidth / 2.0f,
-        SCREEN_HEIGHT / 2.0f - (totalContentHeight / 2.0f) // Start drawing logo from this Y
+        SCREEN_HEIGHT / 2.0f - (totalContentHeight / 2.0f)
     };
 
     DrawTexturePro(state->logoTexture,
@@ -134,8 +134,8 @@ void RenderplashScreen(const GameState *state)
 
     // --- DRAW TEXT ---
     const char *logoText = "FLOWAREGAMES";
-    float fontSize = 50; // Use a variable for font size
-    float spacing = 2;   // Use a variable for spacing
+    float fontSize = 50; 
+    float spacing = 2;   
 
     Vector2 textSize = MeasureTextEx(state->mainFont, logoText, fontSize, spacing);
 

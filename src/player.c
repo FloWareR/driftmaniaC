@@ -10,13 +10,12 @@
 void InitPlayer(Player *player, Texture2D texture)
 {
     player->texture = texture;
-    player->textureRect = (Rectangle){0, 0, 16, 16};
+    player->textureRect = (Rectangle){0, 0, 9, 14};
     player->position = (Vector2){1280 / 2.0f, 720 / 2.0f};
     player->velocity = (Vector2){0, 0};
 
-    float aspectRatio = (float)player->textureRect.width / player->textureRect.height;
-    player->width = 75;
-    player->height = player->width / aspectRatio;
+    player->width = 40.0f;
+    player->height = player->width * (14.0f / 9.0f);
     player->origin = (Vector2){player->width / 2.0f, player->height / 2.0f};
 
     // --- SET PLAYER VARIABLES ---
@@ -159,14 +158,14 @@ void UpdatePlayer(Player *player, ParticleSystem *system, float dt)
     if (newPosition.x > maxX)
     {
         newPosition.x = maxX;
-        player->velocity.x = 0; 
+        player->velocity.x = 0;
     }
 
     // Check and clamp Y-axis
     if (newPosition.y < minY)
     {
         newPosition.y = minY;
-        player->velocity.y = 0; 
+        player->velocity.y = 0;
     }
     if (newPosition.y > maxY)
     {

@@ -11,6 +11,7 @@
         "particle.h": "c",
         "format": "c",
         "iosfwd": "c",
-        "xlocbuf": "c"
+        "xlocbuf": "c",
+        "raymath.h": "c"
     }
 }

@@ -57,9 +57,13 @@ void RenderGame(const GameState *state)
     // Draw particles
     DrawParticleSystem(&state->particleSystem);
 
+    // Draw Entities
+    DrawEntities(&state->entityManager, state->isDebugMode);
+
     // Draw Player
     const Player *player = &state->player;
     Rectangle car_dest_rect = {player->position.x, player->position.y, player->width, player->height};
+
     DrawTexturePro(
         player->texture,
         player->textureRect,
@@ -68,12 +72,31 @@ void RenderGame(const GameState *state)
         player->rotation,
         player->isDrifting ? YELLOW : WHITE);
 
+    if (state->isDebugMode)
+    {
+        DrawRectanglePro(car_dest_rect, player->origin, player->rotation, Fade(GREEN, 0.3f));
+    }
     EndMode2D();
 
     // UI elements
     DrawFPS(SCREEN_WIDTH - 90, 10);
+    DrawTextEx(state->mainFont, TextFormat("SCORE: %04i", state->player.score), (Vector2){10, 120}, 24, 1, WHITE);
     DrawTextEx(state->mainFont, "UP: Accelerate\nDOWN: Brake/Reverse\nSPACE: Drift", (Vector2){10, 10}, 24, 1, WHITE);
     DrawTextEx(state->mainFont, TextFormat("SPEED: %.0f", Vector2Length(player->velocity)), (Vector2){10, 90}, 24, 1, WHITE);
+}
+
+void LoadLevel(EntityManager *em)
+{
+    // Clear any old entities
+    InitEntityManager(em);
+
+    // Spawn some collectables
+    SpawnEntity(em, COLLECTABLE_SCORE, (Vector2){600, 600});
+    SpawnEntity(em, COLLECTABLE_SCORE, (Vector2){650, 600});
+    SpawnEntity(em, COLLECTABLE_SCORE, (Vector2){700, 600});
+
+    // Spawn an obstacle
+    SpawnEntity(em, OBSTACLE_ROCK, (Vector2){1024, 800});
 }
 
 /**
@@ -84,4 +107,5 @@ void ResetGameplayState(GameState *state)
     InitPlayer(&state->player, state->carTexture);
     InitCamera(&state->camera, state->player.position);
     InitParticleSystem(&state->particleSystem);
+    LoadLevel(&state->entityManager);
 }
