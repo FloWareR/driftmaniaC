@@ -12,6 +12,8 @@
         "format": "c",
         "iosfwd": "c",
         "xlocbuf": "c",
-        "raymath.h": "c"
+        "raymath.h": "c",
+        "audio.h": "c",
+        "stdlib.h": "c"
     }
 }

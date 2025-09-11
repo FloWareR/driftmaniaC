@@ -5,9 +5,11 @@
 #include "player.h"
 #include "particle.h"
 #include "entity.h"
+
 //====================================================================================
 // Structs and Typedefs
 //====================================================================================
+struct AudioManager;
 
 // Enum holds all the possible game "screens"
 typedef enum GameScreen
@@ -31,6 +33,7 @@ typedef struct GameState
     ParticleSystem particleSystem;
     GameScreen currentScreen;
     EntityManager entityManager;
+    struct AudioManager *audioManager;
     int timer;
     bool isDebugMode;
 } GameState;

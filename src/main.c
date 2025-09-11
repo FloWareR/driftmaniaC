@@ -1,9 +1,11 @@
 #include <raylib.h>
+#include <stdlib.h>
 #include "config.h"
 #include "player.h"
 #include "game.h"
 #include "particle.h"
 #include "ui.h"
+#include "audio.h"
 
 //====================================================================================
 // Main Entry Point
@@ -17,6 +19,12 @@ int main(void)
     SetTargetFPS(60);
 
     GameState state = {0};
+
+    state.audioManager = (AudioManager *)malloc(sizeof(AudioManager));
+    if (state.audioManager == NULL)
+        return 1;
+
+    InitAudioManager(state.audioManager);
     state.currentScreen = SPLASH_SCREEN;
 
     // Load Textures
@@ -35,8 +43,10 @@ int main(void)
     // Main game loop
     while (state.currentScreen != QUIT && !WindowShouldClose())
     {
+        UpdateGameMusic(state.audioManager);
 
-        if(IsKeyPressed(KEY_F3)) state.isDebugMode = !state.isDebugMode;
+        if (IsKeyPressed(KEY_F3))
+            state.isDebugMode = !state.isDebugMode;
 
         // --- UPDATE LOGIC based on the current screen ---
         switch (state.currentScreen)
@@ -54,7 +64,7 @@ int main(void)
                 break;
             }
             float dt = GetFrameTime();
-            CheckPlayerEntityCollisions(&state.player, &state.entityManager); 
+            CheckPlayerEntityCollisions(&state.player, &state.entityManager);
             HandleInput(&state.player, dt);
             UpdatePlayer(&state.player, &state.particleSystem, dt);
             UpdatePlayerCamera(&state.camera, &state.player, dt);
@@ -97,6 +107,7 @@ int main(void)
     UnloadTexture(state.backgroundTexture);
     UnloadFont(state.mainFont);
     UnloadTexture(state.logoTexture);
+    UnloadAudioManager(state.audioManager);
     CloseWindow();
     //----------------------------------------------------------------------------------
 

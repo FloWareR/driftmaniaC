@@ -1,6 +1,6 @@
 #include "ui.h"
 #include "config.h"
-
+#include "audio.h"
 static int splashScreenTimer = 0;
 
 /**
@@ -13,6 +13,7 @@ void UpdateSplashScreen(GameState *state)
     if (splashScreenTimer > 180)
     {
         state->currentScreen = MAIN_MENU;
+        PlayGameMusic(state->audioManager, MAIN_MENU);
     }
 }
 
@@ -31,6 +32,7 @@ void UpdateMainMenu(GameState *state)
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
             ResetGameplayState(state);
+            PlayGameMusic(state->audioManager, GAMEPLAY);
             state->currentScreen = GAMEPLAY;
         }
     }
@@ -73,6 +75,7 @@ void UpdatePauseMenu(GameState *state)
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
             state->currentScreen = MAIN_MENU;
+            PlayGameMusic(state->audioManager, MAIN_MENU);
         }
     }
 }
@@ -122,8 +125,7 @@ void RenderplashScreen(const GameState *state)
 
     Vector2 logoDrawPosition = {
         SCREEN_WIDTH / 2.0f - targetLogoWidth / 2.0f,
-        SCREEN_HEIGHT / 2.0f - (totalContentHeight / 2.0f)
-    };
+        SCREEN_HEIGHT / 2.0f - (totalContentHeight / 2.0f)};
 
     DrawTexturePro(state->logoTexture,
                    (Rectangle){0, 0, (float)state->logoTexture.width, (float)state->logoTexture.height},
@@ -134,15 +136,14 @@ void RenderplashScreen(const GameState *state)
 
     // --- DRAW TEXT ---
     const char *logoText = "FLOWAREGAMES";
-    float fontSize = 50; 
-    float spacing = 2;   
+    float fontSize = 50;
+    float spacing = 2;
 
     Vector2 textSize = MeasureTextEx(state->mainFont, logoText, fontSize, spacing);
 
     Vector2 textPosition = {
         SCREEN_WIDTH / 2.0f - textSize.x / 2.0f,
-        logoDrawPosition.y + targetLogoHeight + 50.0f
-    };
+        logoDrawPosition.y + targetLogoHeight + 50.0f};
 
     DrawTextEx(state->mainFont, logoText, textPosition, 50, 2, Fade(WHITE, alpha));
 }
