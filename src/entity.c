@@ -1,4 +1,5 @@
 #include "entity.h"
+#include "config.h"
 #include <raymath.h>
 
 #define COLLECTABLE_COLOR GOLD
@@ -9,6 +10,28 @@ void InitEntityManager(EntityManager *em)
     for (int i = 0; i < MAX_ENTITIES; i++)
     {
         em->entities[i].isActive = false;
+    }
+}
+
+void UpdateEntities(EntityManager *em, float dt)
+{
+    for (int i = 0; i < MAX_ENTITIES; i++)
+    {
+        if (em->entities[i].isActive && em->entities[i].pattern != PATTERN_STATIC)
+        {
+            Entity *e = &em->entities[i];
+
+            // Move the entity based on its velocity and speed
+            e->position = Vector2Add(e->position, Vector2Scale(e->velocity, e->speed * dt));
+            e->bounds.x = e->position.x - e->bounds.width / 2;
+            e->bounds.y = e->position.y - e->bounds.height / 2;
+
+            // Deactive if it goes off-screen
+            if (e->position.y > WORLD_HEIGHT + 100 || e->position.y < -100 || e->position.x > WORLD_WIDTH + 100 || e->position.x < -100)
+            {
+                e->isActive = false;
+            }
+        }
     }
 }
 
@@ -44,9 +67,9 @@ void SpawnEntity(EntityManager *em, EntityType type, Vector2 position)
                 .isActive = true,
                 .type = type};
 
-            float size = (type == OBSTACLE_ROCK) ? 50.0f : 25.0f;
+            float size = (type == HAZARD_CAR) ? 50.0f : 25.0f;
             em->entities[i].bounds = (Rectangle){position.x - size / 2, position.y - size / 2, size, size};
-            em->entities[i].color = (type == OBSTACLE_ROCK) ? OBSTACLE_COLOR : COLLECTABLE_COLOR;
+            em->entities[i].color = (type == HAZARD_CAR) ? OBSTACLE_COLOR : COLLECTABLE_COLOR;
 
             return; // Exit after spawning one
         }
@@ -79,7 +102,7 @@ void CheckPlayerEntityCollisions(Player *player, EntityManager *em)
                     // TODO: Play a collection sound effect
                     break;
 
-                case OBSTACLE_ROCK:
+                case HAZARD_CAR:
                 {
                     // Get the rectangle that represents the overlap area.
                     Rectangle overlap = GetCollisionRec(playerBounds, entity->bounds);
@@ -122,6 +145,45 @@ void CheckPlayerEntityCollisions(Player *player, EntityManager *em)
                 }
                 }
             }
+        }
+    }
+}
+
+/**
+ * @brief Spawns a given number of entities at random, non-overlapping locations.
+ */
+void SpawnEntitiesRandomly(SpawnConfig config)
+{
+    int spawnCount = 0;
+    while (spawnCount < config.count)
+    {
+        // Generate a random position within the world boundaries
+        float x = (float)GetRandomValue(50, WORLD_WIDTH - 50);
+        float y = (float)GetRandomValue(50, WORLD_HEIGHT - 50);
+        Vector2 pos = {x, y};
+
+        float size = (config.type == HAZARD_CAR) ? 50.0f : 25.0f;
+        Rectangle newEntityBounds = {pos.x - size / 2, pos.y - size / 2, size, size};
+
+        // Check for overlap with existing entities
+        bool overlaps = false;
+        for (int i = 0; i < MAX_ENTITIES; i++)
+        {
+            if (config.em->entities[i].isActive)
+            {
+                if (CheckCollisionRecs(newEntityBounds, config.em->entities[i].bounds))
+                {
+                    overlaps = true;
+                    break; // Found an overlap, try a new position
+                }
+            }
+        }
+
+        // If no overlap, spawn the entity
+        if (!overlaps)
+        {
+            SpawnEntity(config.em, config.type, pos);
+            spawnCount++;
         }
     }
 }

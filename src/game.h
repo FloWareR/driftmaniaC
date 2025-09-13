@@ -29,6 +29,7 @@ typedef struct GameState
     Texture2D backgroundTexture;
     Texture2D carTexture;
     Texture2D logoTexture;
+    Texture2D mainMenuBackground; 
     Font mainFont;
     ParticleSystem particleSystem;
     GameScreen currentScreen;

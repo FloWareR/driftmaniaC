@@ -1,7 +1,10 @@
 #include "ui.h"
 #include "config.h"
 #include "audio.h"
+
 static int splashScreenTimer = 0;
+static int mainMenuSelection = 0;
+static int pauseMenuSelection = 0;
 
 /**
  * @brief Frame Counter for the splash screen
@@ -22,8 +25,29 @@ void UpdateSplashScreen(GameState *state)
  */
 void UpdateMainMenu(GameState *state)
 {
-    Vector2 mousePoint = GetMousePosition();
+    // Keyboard Input
+    if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_UP))
+    {
+        mainMenuSelection = (mainMenuSelection + 1) % 2;
+    }
 
+    if (IsKeyPressed(KEY_ENTER))
+    {
+        switch (mainMenuSelection)
+        {
+        case 0: // PLAY
+            ResetGameplayState(state);
+            state->currentScreen = GAMEPLAY;
+            PlayGameMusic(state->audioManager, GAMEPLAY);
+            break;
+        case 1: // EXIT
+            state->currentScreen = QUIT;
+            break;
+        }
+    }
+
+    // Mouse Input
+    Vector2 mousePoint = GetMousePosition();
     Rectangle playButton = {SCREEN_WIDTH / 2.0f - 100, SCREEN_HEIGHT / 2.0f - 25, 200, 50};
     Rectangle exitButton = {SCREEN_WIDTH / 2.0f - 100, SCREEN_HEIGHT / 2.0f + 35, 200, 50};
 
@@ -51,7 +75,26 @@ void UpdateMainMenu(GameState *state)
  */
 void UpdatePauseMenu(GameState *state)
 {
-    // Allow unpausing by pressing P again
+    // --- KEYBOARD INPUT ---
+    if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_UP))
+    {
+        pauseMenuSelection = (pauseMenuSelection + 1) % 2; // Toggles between 0 and 1
+    }
+
+    if (IsKeyPressed(KEY_ENTER))
+    {
+        switch (pauseMenuSelection)
+        {
+        case 0: // RESUME
+            state->currentScreen = GAMEPLAY;
+            break;
+        case 1: // MAIN MENU
+            state->currentScreen = MAIN_MENU;
+            PlayGameMusic(state->audioManager, MAIN_MENU);
+            break;
+        }
+    }
+    // Allow unpausing by pressing key again
     if (IsKeyPressed(PAUSE_KEY))
     {
         state->currentScreen = GAMEPLAY;
@@ -153,7 +196,48 @@ void RenderplashScreen(const GameState *state)
  */
 void RenderMainMenu(const GameState *state)
 {
-    ClearBackground(DARKGRAY);
+    ClearBackground(BLACK);
+
+    // Get screen and texture dimensions
+    float screenWidth = (float)GetScreenWidth();
+    float screenHeight = (float)GetScreenHeight();
+    float texWidth = (float)state->mainMenuBackground.width;
+    float texHeight = (float)state->mainMenuBackground.height;
+
+    // Calculate aspect ratios
+    float screenAspectRatio = screenWidth / screenHeight;
+    float textureAspectRatio = texWidth / texHeight;
+
+    Rectangle sourceRec = {0, 0, texWidth, texHeight};    
+    Rectangle destRec = {0, 0, screenWidth, screenHeight}; 
+
+    // Adjust source or destination to maintain aspect ratio and fill screen
+    if (textureAspectRatio > screenAspectRatio)
+    {
+        // Texture is wider than screen, need to crop horizontally
+        float scale = screenHeight / texHeight;
+        float scaledWidth = texWidth * scale;
+        float cropAmount = (scaledWidth - screenWidth) / scale;
+        sourceRec.x = cropAmount / 2; // Crop equally from both sides
+        sourceRec.width = texWidth - cropAmount;
+    }
+    else
+    {
+        // Texture is taller than screen, need to crop vertically
+        float scale = screenWidth / texWidth;
+        float scaledHeight = texHeight * scale;
+        float cropAmount = (scaledHeight - screenHeight) / scale;
+        sourceRec.y = cropAmount / 2; // Crop equally from top and bottom
+        sourceRec.height = texHeight - cropAmount;
+    }
+
+    // Draw the background texture, filling the screen while maintaining aspect ratio
+    DrawTexturePro(state->mainMenuBackground,
+                   sourceRec,
+                   destRec,
+                   (Vector2){0, 0},
+                   0.0f,
+                   Fade(WHITE, 0.65f));
 
     // --- DRAW TITLE ---
     // Measure the text dimensions first
@@ -170,20 +254,30 @@ void RenderMainMenu(const GameState *state)
     Rectangle playButton = {SCREEN_WIDTH / 2.0f - 100, SCREEN_HEIGHT / 2.0f - 25, 200, 50};
     Rectangle exitButton = {SCREEN_WIDTH / 2.0f - 100, SCREEN_HEIGHT / 2.0f + 35, 200, 50};
 
-    Color playColor = LIME;
-    Color exitColor = RED;
+    if (CheckCollisionPointRec(GetMousePosition(), playButton))
+    {
+        mainMenuSelection = 0;
+    }
+    else if (CheckCollisionPointRec(GetMousePosition(), exitButton))
+    {
+        mainMenuSelection = 1;
+    }
+    bool isPlaySelected = mainMenuSelection == 0;
+    bool isExitSelected = mainMenuSelection == 1;
 
-    if (CheckCollisionPointRec(mousePoint, playButton))
-        playColor = GREEN;
-    if (CheckCollisionPointRec(mousePoint, exitButton))
-        exitColor = PINK;
-
-    // Draw buttons as rectangles with text
-    DrawRectangleRec(playButton, playColor);
+    DrawRectangleRec(playButton, LIME);
+    if (isPlaySelected)
+    {
+        DrawRectangleLinesEx(playButton, 3, WHITE); // Draw a 3px white outline if selected
+    }
     Vector2 playTextPos = GetTextCenterPositionInRect(playButton, "PLAY", state->mainFont, 30, 2);
     DrawTextEx(state->mainFont, "PLAY", playTextPos, 30, 2, BLACK);
 
-    DrawRectangleRec(exitButton, exitColor);
+    DrawRectangleRec(exitButton, RED);
+    if (isExitSelected)
+    {
+        DrawRectangleLinesEx(exitButton, 3, WHITE); // Draw a 3px white outline if selected
+    }
     Vector2 exitTextPos = GetTextCenterPositionInRect(exitButton, "EXIT", state->mainFont, 30, 2);
     DrawTextEx(state->mainFont, "EXIT", exitTextPos, 30, 2, BLACK);
 }
@@ -208,24 +302,34 @@ void RenderPauseMenu(const GameState *state)
 
     // --- Draw Buttons and Handle Hover ---
     Vector2 mousePoint = GetMousePosition();
+
     Rectangle resumeButton = {SCREEN_WIDTH / 2.0f - 100, SCREEN_HEIGHT / 2.0f - 25, 200, 50};
     Rectangle menuButton = {SCREEN_WIDTH / 2.0f - 100, SCREEN_HEIGHT / 2.0f + 35, 200, 50};
 
-    Color resumeColor = LIME;
-    Color menuColor = ORANGE;
+    if (CheckCollisionPointRec(GetMousePosition(), resumeButton))
+    {
+        pauseMenuSelection = 0;
+    }
+    else if (CheckCollisionPointRec(GetMousePosition(), menuButton))
+    {
+        pauseMenuSelection = 1;
+    }
+    bool isResumeSelected = pauseMenuSelection == 0;
+    bool isMenuSelected = pauseMenuSelection == 1;
 
-    if (CheckCollisionPointRec(mousePoint, resumeButton))
-        resumeColor = GREEN;
-    if (CheckCollisionPointRec(mousePoint, menuButton))
-        menuColor = GOLD;
-
-    // --- Draw RESUME Button ---
-    DrawRectangleRec(resumeButton, resumeColor);
+    DrawRectangleRec(resumeButton, LIME);
+    if (isResumeSelected)
+    {
+        DrawRectangleLinesEx(resumeButton, 3, WHITE); // Draw a 3px white outline if selected
+    }
     Vector2 resumeTextPos = GetTextCenterPositionInRect(resumeButton, "RESUME", state->mainFont, 30, 2);
     DrawTextEx(state->mainFont, "RESUME", resumeTextPos, 30, 2, BLACK);
 
-    // --- Draw MAIN MENU Button ---
-    DrawRectangleRec(menuButton, menuColor);
+    DrawRectangleRec(menuButton, ORANGE);
+    if (isMenuSelected)
+    {
+        DrawRectangleLinesEx(menuButton, 3, WHITE); // Draw a 3px white outline if selected
+    }
     Vector2 menuTextPos = GetTextCenterPositionInRect(menuButton, "MAIN MENU", state->mainFont, 30, 2);
     DrawTextEx(state->mainFont, "MAIN MENU", menuTextPos, 30, 2, BLACK);
 }

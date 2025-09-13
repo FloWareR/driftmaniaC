@@ -8,10 +8,17 @@ void InitAudioManager(AudioManager *am)
     // --- LOAD MUSIC ---
     am->music[MUSIC_MENU] = LoadMusicStream("src/assets/audio/main_menu_track.mp3");
     am->music[MUSIC_GAMEPLAY] = LoadMusicStream("src/assets/audio/ingame_track.mp3");
+    am->music[MUSIC_SPLASH] = LoadMusicStream("src/assets/audio/splash_track1.mp3");
+
+    // --- SET LOOPING PROPERTIES ---
+    am->music[MUSIC_SPLASH].looping = false;
+    am->music[MUSIC_MENU].looping = true;
+    am->music[MUSIC_GAMEPLAY].looping = true;
 
     // Set initial volumes
+    SetMusicVolume(am->music[MUSIC_SPLASH], 0.25f);
     SetMusicVolume(am->music[MUSIC_MENU], 0.5f);
-    SetMusicVolume(am->music[MUSIC_GAMEPLAY], 0.5f);
+    SetMusicVolume(am->music[MUSIC_GAMEPLAY], 0.3f);
 }
 
 void UnloadAudioManager(AudioManager *am)
@@ -34,6 +41,9 @@ void PlayGameMusic(AudioManager *am, GameScreen screen)
     // Select and play the new track
     switch (screen)
     {
+    case SPLASH_SCREEN:
+        am->currentMusic = am->music[MUSIC_SPLASH];
+        break;
     case MAIN_MENU:
         am->currentMusic = am->music[MUSIC_MENU];
         break;
@@ -49,6 +59,7 @@ void PlayGameMusic(AudioManager *am, GameScreen screen)
 // This function MUST be called every frame to keep playing music
 void UpdateGameMusic(AudioManager *am)
 {
+
     if (IsMusicStreamPlaying(am->currentMusic))
     {
         UpdateMusicStream(am->currentMusic);

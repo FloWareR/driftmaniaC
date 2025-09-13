@@ -29,7 +29,7 @@ int main(void)
 
     // Load Textures
     state.carTexture = LoadTexture("src/assets/Sprites/Cars/car-red.png");
-    // state.backgroundTexture = LoadTexture("src/assets/background.jpg");
+    state.mainMenuBackground = LoadTexture("src/assets/main_menu_background.jpg");
     state.backgroundTexture = LoadTexture("src/assets/Sprites/Levels/Soil_Tile.png");
     state.logoTexture = LoadTexture("src/assets/flowarelogo.png");
 
@@ -39,6 +39,8 @@ int main(void)
     // Initialize Game Objects
     ResetGameplayState(&state);
     //----------------------------------------------------------------------------------
+
+    PlayGameMusic(state.audioManager, SPLASH_SCREEN);
 
     // Main game loop
     while (state.currentScreen != QUIT && !WindowShouldClose())
@@ -108,6 +110,7 @@ int main(void)
     UnloadFont(state.mainFont);
     UnloadTexture(state.logoTexture);
     UnloadAudioManager(state.audioManager);
+    UnloadTexture(state.mainMenuBackground); 
     CloseWindow();
     //----------------------------------------------------------------------------------
 

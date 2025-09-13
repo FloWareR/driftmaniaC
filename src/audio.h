@@ -21,8 +21,9 @@ typedef enum SoundEffect
 
 typedef enum MusicTracks
 {
+    MUSIC_SPLASH,
     MUSIC_MENU,
-    MUSIC_GAMEPLAY
+    MUSIC_GAMEPLAY,
 } MusicTracks;
 
 typedef struct AudioManager

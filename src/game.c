@@ -85,18 +85,21 @@ void RenderGame(const GameState *state)
     DrawTextEx(state->mainFont, TextFormat("SPEED: %.0f", Vector2Length(player->velocity)), (Vector2){10, 90}, 24, 1, WHITE);
 }
 
+/**
+ * @brief Generates the level with random spawn locations for entities
+ */
 void LoadLevel(EntityManager *em)
 {
     // Clear any old entities
     InitEntityManager(em);
 
-    // Spawn some collectables
-    SpawnEntity(em, COLLECTABLE_SCORE, (Vector2){600, 600});
-    SpawnEntity(em, COLLECTABLE_SCORE, (Vector2){650, 600});
-    SpawnEntity(em, COLLECTABLE_SCORE, (Vector2){700, 600});
+    // Spawn collectablesrandomly
+    SpawnConfig collectableConfig = {em, COLLECTABLE_SCORE, 20};
+    SpawnEntitiesRandomly(collectableConfig);
 
-    // Spawn an obstacle
-    SpawnEntity(em, OBSTACLE_ROCK, (Vector2){1024, 800});
+    // Spawn obstacles randomly
+    SpawnConfig obstacleConfig = {em, HAZARD_CAR, 15};
+    SpawnEntitiesRandomly(obstacleConfig);
 }
 
 /**
